@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+    <p>
+        <a class="btn btn-primary" href="/register">Зарегистрироваться</a>
+        <a class="btn btn-primary" href="/logout">Выйти</a>
+
+    </p>
+    <a class="btn btn-primary" href="/send_message">Отправить сообщение</a>
+    {% for message in all_messages %}
+      <div>
+          <p><em>Отправитель: {{message.from_id}},
+              дата: {{message.created_date}}</em></p>
+          <p>{{message.text}}</p>
+      </div>
+    {% endfor %}
+{% endblock %}
