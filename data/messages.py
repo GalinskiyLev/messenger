@@ -2,7 +2,6 @@ import datetime
 import sqlalchemy
 from .db_session import SqlAlchemyBase
 from sqlalchemy import orm
-from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from sqlalchemy_serializer import SerializerMixin
 
@@ -18,5 +17,5 @@ class Message(SqlAlchemyBase, UserMixin, SerializerMixin):
     created_date = sqlalchemy.Column(sqlalchemy.DateTime,
                                      default=datetime.datetime.now)
     is_friend = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
-    # from_user = orm.relation('User')
-    # to_user = orm.relation('User')
+    from_user = orm.relation('User', foreign_keys=[from_id])
+    to_user = orm.relation('User', foreign_keys=[to_id])

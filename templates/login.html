@@ -4,6 +4,7 @@
 <h1>Авторизация</h1>
 <form method="post" novalidate>
     {{ form.hidden_tag() }}
+    <p><a class="btn btn-primary" href="/register">Зарегистрироваться</a></p>
     <p>
         {{ form.email.label }}<br>
         {{ form.email(class="form-control", type="email") }}<br>

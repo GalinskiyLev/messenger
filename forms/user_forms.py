@@ -23,4 +23,5 @@ class LoginForm(FlaskForm):
 class SendMessageForm(FlaskForm):
     email = EmailField('Введите почту получателя', validators=[DataRequired()])
     text = TextAreaField('Текст сообщения')
+    is_friend = BooleanField('Приглашение в друзья')
     submit = SubmitField('Отправить сообщение')

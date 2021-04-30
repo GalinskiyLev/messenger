@@ -13,5 +13,5 @@ class Friend(SqlAlchemyBase, UserMixin, SerializerMixin):
                            primary_key=True, autoincrement=True)
     from_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("user.id"), nullable=False, index=True)
     to_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("user.id"), nullable=False, index=True)
-    # from_user = orm.relation('User')
-    # to_user = orm.relation('User')
+    from_user = orm.relation('User', foreign_keys=[from_id])
+    to_user = orm.relation('User', foreign_keys=[to_id])

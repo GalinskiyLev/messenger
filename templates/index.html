@@ -5,12 +5,31 @@
         <a class="btn btn-primary" href="/logout">Выйти</a>
 
     </p>
-    <a class="btn btn-primary" href="/send_message">Отправить сообщение</a>
+    <h1>Приветствуем вас, {{current_user.fio}}</h1>
+    <a class="btn btn-primary" href="/send_message/0">Отправить сообщение</a>
+    <div id="content">
+            {% for friend in all_friends %}
+                <div><a href="/send_message/{{friend.to_user.id}}">{{friend.to_user.fio}}</a></div>
+            {% endfor %}
+    </div>
     {% for message in all_messages %}
-      <div>
-          <p><em>Отправитель: {{message.from_id}},
-              дата: {{message.created_date}}</em></p>
+      {% if message.is_friend %}
+        <div>
+          <p><em>дата: {{message.created_date}},
+              Пользователь {{message.from_user.fio}} хочет добавить вас в друзья:
+              </em></p>
           <p>{{message.text}}</p>
-      </div>
+          <p>
+            <button onclick="window.location.href = '/add_friend/1/{{message.id}}'">Да</button>
+            <button onclick="window.location.href = '/add_friend/0/{{message.id}}'">Нет</button>
+          </p>
+        </div>
+      {% else %}
+          <div>
+              <p><em>Отправитель: {{message.from_user.fio}},
+                  дата: {{message.created_date}}</em></p>
+              <p>{{message.text}}</p>
+          </div>
+      {% endif %}
     {% endfor %}
 {% endblock %}

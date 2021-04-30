@@ -26,7 +26,8 @@ def index():
     if not current_user.is_authenticated:
         return redirect("/login")
     all_messages = db_sess.query(Message).filter(Message.to_id == current_user.id).order_by(Message.created_date.desc()).all()
-    resp = render_template("index.html", all_messages=all_messages)
+    all_friends = db_sess.query(Friend).filter(Friend.from_id == current_user.id).all()
+    resp = render_template("index.html", all_messages=all_messages, all_friends=all_friends)
     return resp
 
 
@@ -77,10 +78,11 @@ def logout():
     return redirect("/")
 
 
-@app.route("/send_message", methods=["GET", "POST"])
+@app.route("/send_message/<int:user_id>", methods=["GET", "POST"])
 @login_required
-def send_message():
+def send_message(user_id):
     form = SendMessageForm()
+    db_sess = db_session.create_session()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         user = db_sess.query(User).filter(User.email == form.email.data).first()
@@ -92,11 +94,35 @@ def send_message():
                                    message="Введите сообщение")
         message = Message(text=form.text.data,
                           to_id=user.id,
-                          from_id=current_user.id)
+                          from_id=current_user.id,
+                          is_friend=form.is_friend.data)
         db_sess.add(message)
         db_sess.commit()
         return redirect('/')
+    if user_id:
+        user = db_sess.query(User).filter(User.id == user_id).first()
+        form.email.data = user.email
     return render_template('send_message.html', title='Отправление сообщения', form=form)
+
+
+@app.route('/add_friend/<int:i>/<int:id>', methods=['GET', 'POST'])
+@login_required
+def add_friend(i, id):
+    db_sess = db_session.create_session()
+    message = db_sess.query(Message).get(id)
+    if message:
+        if i:
+            friend = Friend(to_id=message.from_user.id,
+                            from_id=message.to_user.id)
+            db_sess.add(friend)
+            friend = Friend(from_id=message.from_user.id,
+                            to_id=message.to_user.id)
+            db_sess.add(friend)
+        db_sess.query(Message).filter(Message.id == id).delete()
+        db_sess.commit()
+        return redirect('/')
+    else:
+        abort(404)
 
 
 if __name__ == "__main__":
