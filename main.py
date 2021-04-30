@@ -92,6 +92,9 @@ def send_message(user_id):
         if not form.text.data:
             return render_template('send_message.html', title='Отправление сообщения', form=form,
                                    message="Введите сообщение")
+        if form.is_friend.data and form.email.data == current_user.email:
+            return render_template('send_message.html', title='Отправление сообщения', form=form,
+                                   message="Нельзя посылать себе запрос в друзья")
         message = Message(text=form.text.data,
                           to_id=user.id,
                           from_id=current_user.id,
